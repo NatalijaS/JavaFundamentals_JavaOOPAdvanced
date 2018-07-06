@@ -1,0 +1,75 @@
+package _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite;
+
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.interfaces.*;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.missionsAndRepairs.Mission;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.missionsAndRepairs.Repair;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.soldiers.Spy;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.soldiers.privates.LeutenantGeneral;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.soldiers.privates.Private;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.soldiers.privates.specializedSoldier.Commando;
+import _01_InterfacesAndAbstraction_Exercises._08_MilitaryElite.soldiers.privates.specializedSoldier.Engineer;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        LinkedHashMap<Integer, ISoldier> soldiers = new LinkedHashMap<>();
+        String line = reader.readLine();
+        while (!line.equals("End")) {
+            String[] input = line.split("\\s+");
+
+            switch (input[0]) {
+                case "Private":
+                    ISoldier privateSoldier = new Private(Integer.valueOf(input[1]), input[2], input[3], Double.valueOf(input[4]));
+                    soldiers.put(privateSoldier.getId(), privateSoldier);
+                    break;
+                case "LeutenantGeneral":
+                    ILeutenanatGeneral leutenanatGeneral =
+                            new LeutenantGeneral(Integer.valueOf(input[1]), input[2], input[3], Double.valueOf(input[4]));
+                    for (int i = 5; i < input.length; i++) {
+                        leutenanatGeneral.addPrivate((Private) soldiers.get(Integer.valueOf(input[i])));
+                    }
+                    soldiers.put(leutenanatGeneral.getId(), leutenanatGeneral);
+                    break;
+                case "Engineer":
+                    try {
+                        IEngineer engineer = new Engineer(Integer.valueOf(input[1]), input[2], input[3],
+                                Double.valueOf(input[4]), input[5]);
+                        for (int i = 6; i < input.length; i+=2) {
+                            engineer.addRepair(new Repair(input[i], Integer.valueOf(input[i + 1])));
+                        }
+                        soldiers.put(engineer.getId(), engineer);
+                    } catch (IllegalArgumentException e) {}
+                    break;
+                case "Commando":
+                    try {
+                        ICommando commando = new Commando(Integer.valueOf(input[1]), input[2], input[3],
+                                Double.valueOf(input[4]), input[5]);
+                        for (int i = 6; i < input.length; i += 2) {
+                            try {
+                                commando.addMission(new Mission(input[i], input[i + 1]));
+                            } catch (IllegalArgumentException e) {}
+                        }
+                        soldiers.put(commando.getId(), commando);
+                    } catch (IllegalArgumentException e) {}
+                    break;
+                case "Spy":
+                    ISpy spy = new Spy(Integer.valueOf(input[1]), input[2], input[3], Integer.valueOf(input[4]));
+                    soldiers.put(spy.getId(), spy);
+                    break;
+                default:
+                    break;
+            }
+            line = reader.readLine();
+        }
+
+        for (ISoldier iSoldier : soldiers.values()) {
+            System.out.println(iSoldier.toString().trim());
+        }
+    }
+}
