@@ -9,7 +9,7 @@ import java.lang.reflect.Constructor;
 public class UnitFactoryImpl implements UnitFactory {
 
 	private static final String UNITS_PACKAGE_NAME =
-			"_03_04_Barracks.models.units.";
+			"_03_04_Barracks.domain.units.";
 
 	@Override
 	@SuppressWarnings("unchecked")
